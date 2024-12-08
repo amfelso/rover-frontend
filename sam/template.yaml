@@ -1,0 +1,50 @@
+
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Resources:
+  ReactAppBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: error.html
+      OwnershipControls: # Enforce bucket owner control
+        Rules:
+          - ObjectOwnership: BucketOwnerEnforced
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: false # Allow policies to manage public access
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: false
+
+  ReactAppBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref ReactAppBucket
+      PolicyDocument:
+        Statement:
+          - Sid: PublicReadGetObject
+            Effect: Allow
+            Principal: "*"
+            Action: "s3:GetObject"
+            Resource: !Sub "arn:aws:s3:::${ReactAppBucket}/*"
+
+  ReactAppUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: ReactAppUserPool
+
+Outputs:
+  S3BucketName:
+    Value: !Ref ReactAppBucket
+    Description: "S3 bucket for hosting React App"
+
+  WebsiteURL:
+    Value: !GetAtt ReactAppBucket.WebsiteURL
+    Description: "The URL for the React app hosted on S3"
+
+  CognitoUserPoolId:
+    Value: !Ref ReactAppUserPool
+    Description: "Cognito User Pool ID"
+                
