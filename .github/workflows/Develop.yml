@@ -57,7 +57,7 @@ jobs:
         AWS_REGION: us-east-1
       run: |
         BUCKET_NAME=$(aws cloudformation describe-stacks --stack-name rover-frontend \
-          --query "Stacks[0].Outputs[?OutputKey=='BucketName'].OutputValue" --output text)
+          --query "Stacks[0].Outputs[?OutputKey=='S3BucketName'].OutputValue" --output text)
         echo "BUCKET_NAME=$BUCKET_NAME" >> $GITHUB_ENV
 
     - name: Deploy React App to S3
