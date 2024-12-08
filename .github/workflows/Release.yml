@@ -20,7 +20,11 @@ jobs:
       with:
         node-version: '18'
 
-    # Step 3: Deploy Infrastructure with SAM
+    # Step 3: Install Dependencies
+    - name: Install Dependencies
+      run: npm install
+
+    # Step 4: Deploy Infrastructure with SAM
     - name: Deploy Infrastructure
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -28,11 +32,11 @@ jobs:
         AWS_REGION: us-east-1
       run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name rover-frontend --capabilities CAPABILITY_IAM --template-file ./sam/template.yaml --region us-east-1
 
-    # Step 4: Build React App
+    # Step 5: Build React App
     - name: Build React App
       run: npm run build
 
-    # Step 5: Get Bucket Name
+    # Step 6: Get Bucket Name
     - name: Get Bucket Name
       id: get_bucket_name
       env:
@@ -44,7 +48,7 @@ jobs:
           --query "Stacks[0].Outputs[?OutputKey=='S3BucketName'].OutputValue" --output text)
         echo "BUCKET_NAME=$BUCKET_NAME" >> $GITHUB_ENV
 
-    # Step 6: Deploy React App to S3
+    # Step 7: Deploy React App to S3
     - name: Deploy React App to S3
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
