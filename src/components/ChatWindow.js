@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function ChatWindow({ selectedDate }) {
+function ChatWindow() {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
 
@@ -11,39 +11,9 @@ function ChatWindow({ selectedDate }) {
         const userMessage = { sender: 'You', text: input };
         setMessages([...messages, userMessage]);
 
-        try {
-            // API Payload
-            const payload = {
-                earth_date: selectedDate,
-                conversation_id: selectedDate,
-                user_prompt: input,
-            };
-
-            // Call the API (replace `YOUR_API_URL` with the actual endpoint)
-            const response = await fetch('YOUR_API_URL', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload),
-            });
-
-            if (!response.ok) {
-                throw new Error('API request failed');
-            }
-
-            const data = await response.json();
-
-            // Add the Rover's response to the chat
-            const roverMessage = { sender: 'Rover', text: data.response }; // Adjust the key if your API returns something else
-            setMessages((prevMessages) => [...prevMessages, roverMessage]);
-        } catch (error) {
-            console.error('Error sending message:', error);
-            setMessages((prevMessages) => [
-                ...prevMessages,
-                { sender: 'System', text: 'Error communicating with the Rover. Please try again.' },
-            ]);
-        }
+        // Mock response for now; replace this with boto3 API connection later
+        const roverResponse = { sender: 'Rover', text: 'Hello from Mars!' };
+        setMessages([...messages, userMessage, roverResponse]);
 
         setInput(''); // Clear input field
     };
