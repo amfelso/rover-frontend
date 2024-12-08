@@ -1,70 +1,135 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Rover Frontend
 
-## Available Scripts
+[![Develop](https://github.com/amfelso/rover-frontend/actions/workflows/Develop.yml/badge.svg)](https://github.com/amfelso/rover-frontend/actions/workflows/Develop.yml)
+[![Release](https://github.com/amfelso/rover-frontend/actions/workflows/Release.yml/badge.svg)](https://github.com/amfelso/rover-frontend/actions/workflows/Release.yml)
 
-In the project directory, you can run:
+## Description
 
-### `npm start`
+This repository contains the **Rover Frontend**, a React-based application designed to interact with the Curiosity Rover API. It includes CI/CD pipelines for both `develop` and `release` branches.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Develop Pipeline**: Lints, tests, and validates the SAM template on every push to the `develop` branch.
+- **Release Pipeline**: Deploys infrastructure, builds the React app, and syncs it to the S3 bucket on every push to the `release` branch.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## Getting Started
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Prerequisites
 
-### `npm run build`
+- Node.js (v18 or later)
+- AWS CLI
+- SAM CLI
+- Access to an AWS account with sufficient permissions
+- GitHub Actions secrets for `AWS_ACCESS_KEY` and `AWS_SECRET_ACCESS_KEY`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Project Structure
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```
+.
+├── src/                    # Source code for the React app
+│   ├── components/         # React components
+│   ├── App.js              # Main app file
+│   ├── App.test.js         # Unit tests for the app
+│   └── index.js            # Entry point for the React app
+├── sam/                    # SAM templates for infrastructure
+│   └── template.yaml       # SAM template for the infrastructure
+├── .github/workflows/      # GitHub workflows
+│   ├── develop.yml         # Workflow for develop branch
+│   └── release.yml         # Workflow for release branch
+└── README.md               # Project documentation
+```
 
-### `npm run eject`
+---
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## CI/CD Pipelines
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Develop Pipeline
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Triggered on every push to the `develop` branch. This pipeline performs the following steps:
+1. **Lint**: Checks the codebase using ESLint.
+2. **Test**: Runs unit tests using Jest.
+3. **Validate**: Validates the SAM template.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Release Pipeline
 
-## Learn More
+Triggered on every push to the `release` branch. This pipeline performs the following steps:
+1. **Deploy Infrastructure**: Deploys resources defined in the SAM template.
+2. **Build**: Builds the React application.
+3. **Sync to S3**: Uploads the React app to the S3 bucket for hosting.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Usage
 
-### Code Splitting
+### Running Locally
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-### Analyzing the Bundle Size
+2. Start the development server:
+   ```bash
+   npm start
+   ```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+3. Access the app at `http://localhost:3000`.
 
-### Making a Progressive Web App
+### Running Tests
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Run all unit tests with Jest:
+```bash
+npm test
+```
 
-### Advanced Configuration
+### Validating Infrastructure
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Validate the SAM template locally:
+```bash
+sam validate -t ./sam/template.yaml --region <your-region>
+```
 
-### Deployment
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## Deployment
 
-### `npm run build` fails to minify
+### Manual Deployment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+To deploy infrastructure and sync the app manually:
+1. Deploy infrastructure using SAM:
+   ```bash
+   sam deploy --guided
+   ```
+
+2. Build the React app:
+   ```bash
+   npm run build
+   ```
+
+3. Sync the build folder to S3:
+   ```bash
+   aws s3 sync ./build s3://<your-bucket-name> --delete
+   ```
+
+---
+
+## Contributing
+
+1. Fork this repository.
+2. Create a feature branch.
+3. Submit a pull request.
+
+---
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+
+## Contact
+
+For questions or suggestions, please open an issue in this repository.
