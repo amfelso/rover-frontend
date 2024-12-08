@@ -1,0 +1,68 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - develop
+      - release
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout Code
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Step 2: Set Up Node.js
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    # Step 3: Lint
+    - name: Lint Code
+      run: |
+        npm install eslint eslint-plugin-react eslint-plugin-react-hooks --save-dev
+        npx eslint src/
+
+    # Step 4: Run Unit Tests
+    - name: Run Tests
+      run: |
+        npm install --save-dev jest babel-jest @babel/preset-env @babel/preset-react react-test-renderer
+        npm test
+
+    # Step 5: SAM Validate
+    - name: Validate SAM Template
+      run: sam validate
+
+    # Step 6: Deploy Infrastructure with SAM
+    - name: Deploy Infrastructure
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: us-east-1
+      run: sam deploy --no-confirm-changeset --stack-name rover-frontend --capabilities CAPABILITY_IAM
+
+    # Step 7: Build React App
+    - name: Build React App
+      run: npm run build
+
+    - name: Get Bucket Name
+      id: get_bucket_name
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: us-east-1
+      run: |
+        BUCKET_NAME=$(aws cloudformation describe-stacks --stack-name rover-frontend \
+          --query "Stacks[0].Outputs[?OutputKey=='BucketName'].OutputValue" --output text)
+        echo "BUCKET_NAME=$BUCKET_NAME" >> $GITHUB_ENV
+
+    - name: Deploy React App to S3
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: us-east-1
+      run: aws s3 sync ./build s3://$BUCKET_NAME --delete
