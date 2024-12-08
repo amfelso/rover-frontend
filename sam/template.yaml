@@ -34,17 +34,75 @@ Resources:
     Type: AWS::Cognito::UserPool
     Properties:
       UserPoolName: ReactAppUserPool
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireUppercase: true
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: false
+      UsernameAttributes:
+        - email
+      AutoVerifiedAttributes:
+        - email
+      AccountRecoverySetting:
+        RecoveryMechanisms:
+          - Name: verified_email
+            Priority: 1
+      AdminCreateUserConfig: # Disable self-registration
+        AllowAdminCreateUserOnly: true
+
+  # Cognito App Client
+  ReactAppUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: ReactAppUserPoolClient
+      UserPoolId: !Ref ReactAppUserPool
+      GenerateSecret: false
+      AllowedOAuthFlows:
+        - code
+      AllowedOAuthScopes:
+        - openid
+        - profile
+        - email
+      AllowedOAuthFlowsUserPoolClient: true
+      CallbackURLs:
+        - http://localhost:3000 # Development
+        - !Sub "https://${ReactAppBucket}.s3-website-${AWS::Region}.amazonaws.com" # Production (HTTPS required)
+      LogoutURLs:
+        - http://localhost:3000 # Development
+        - !Sub "https://${ReactAppBucket}.s3-website-${AWS::Region}.amazonaws.com" # Production (HTTPS required)
+      SupportedIdentityProviders:
+        - COGNITO
+
+  # Cognito Domain for Hosted UI
+  ReactAppCognitoDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      Domain: !Sub "rover-frontend-${ReactAppBucket}"
+      UserPoolId: !Ref ReactAppUserPool
 
 Outputs:
-  S3BucketName:
-    Value: !Ref ReactAppBucket
-    Description: "S3 bucket for hosting React App"
-
-  WebsiteURL:
-    Value: !GetAtt ReactAppBucket.WebsiteURL
-    Description: "The URL for the React app hosted on S3"
+  CognitoHostedUIDomain:
+    Value: !Sub "https://${ReactAppCognitoDomain.Domain}.auth.${AWS::Region}.amazoncognito.com"
+    Description: Auto-generated Cognito Hosted UI Domain
 
   CognitoUserPoolId:
     Value: !Ref ReactAppUserPool
-    Description: "Cognito User Pool ID"
-                
+    Description: Cognito User Pool ID
+
+  CognitoUserPoolClientId:
+    Value: !Ref ReactAppUserPoolClient
+    Description: Cognito User Pool Client ID
+
+  CognitoHostedUIDomain:
+    Value: !Sub "https://${ReactAppCognitoDomain}.auth.${AWS::Region}.amazoncognito.com"
+    Description: Cognito Hosted UI Domain
+
+  S3BucketName:
+    Value: !Ref ReactAppBucket
+    Description: Name of the S3 bucket hosting the React app
+
+  WebsiteURL:
+    Value: !GetAtt ReactAppBucket.WebsiteURL
+    Description: URL of the React app hosted on S3
