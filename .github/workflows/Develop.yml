@@ -1,0 +1,37 @@
+name: Develop
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  develop:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout Code
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Step 2: Set Up Node.js
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    # Step 3: Lint
+    - name: Lint Code
+      run: |
+        npm install eslint eslint-plugin-react eslint-plugin-react-hooks --save-dev
+        npx eslint src/
+
+    # Step 4: Run Unit Tests
+    - name: Run Tests
+      run: |
+        npm install --save-dev jest babel-jest @babel/preset-env @babel/preset-react react-test-renderer
+        npm test
+
+    # Step 5: SAM Validate
+    - name: Validate SAM Template
+      run: sam validate -t ./sam/template.yaml --region us-east-1
