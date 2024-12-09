@@ -25,7 +25,7 @@ function ChatWindow({ selectedDate }) {
         if (!messageToSend) return;
 
         // Add the user's message to the chat
-        const userMessage = { sender: 'You', text: messageToSend };
+        const userMessage = { sender: 'You', text: '🌍 ' + messageToSend };
         setMessages([...messages, userMessage]);
 
         setInput(''); // Clear input field
@@ -54,29 +54,29 @@ function ChatWindow({ selectedDate }) {
             const roverResponse = await response.text();
 
             // Add Rover's response to the chat
-            const roverMessage = { sender: 'Rover', text: roverResponse || 'No response from Rover.' };
+            const roverMessage = { sender: 'Rover', text: '🤖 ' + roverResponse || '🤖 ...' };
             setMessages((prevMessages) => [...prevMessages, roverMessage]);
         } catch (error) {
             // Check error status codes
             let errorMessage;
             if (error.response && error.response.status === 429) {
                 errorMessage = {
-                    sender: 'System',
+                    sender: 'Mission Control',
                     text: `🌌 Space travel is expensive! You've hit your OpenAI credit limit. Please pay for more credits so we can keep exploring the Red Planet!`,
                     retry: true, // Enable retry
                     input: messageToSend
                 };
             } else if (error.response && error.response.status === 504) {
                 errorMessage = {
-                    sender: 'System',
+                    sender: 'Mission Control',
                     text: `🛰️ Hmm, it seems your message got lost on its long journey from Mars. Mars is really far away! Please try again.`,
                     retry: true, // Enable retry
                     input: messageToSend
                 };
             } else {
                 errorMessage = {
-                    sender: 'System',
-                    text: 'An unexpected error occurred. Please try again later.',
+                    sender: 'Mission Control',
+                    text: "🌪️ A Martian dust storm seems to be disrupting communications. Let's wait for the skies to clear and try again soon!",
                 };
             }
     
