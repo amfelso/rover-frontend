@@ -5,6 +5,6 @@ import App from './App';
 
 test('renders the welcome message', () => {
   render(<App />);
-  const welcomeElement = screen.getByText(/👋 Welcome to Your Mars Adventure!/i);
+  const welcomeElement = screen.getByText(/📡 Welcome to Mars Observation HQ/i);
   expect(welcomeElement).toBeInTheDocument();
 });

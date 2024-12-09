@@ -3,12 +3,12 @@ import React from 'react';
 function WelcomeMessage() {
     return (
         <header style={styles.header}>
-            <h1 style={styles.title}>👋 Welcome to Your Mars Adventure!</h1>
+            <h1 style={styles.title}>📡 Welcome to Mars Observation HQ</h1>
             <p style={styles.subtitle}>
-                🌌 Discover the Red Planet's secrets, chat with the Rover, and experience Mars like never before.
+                🛰️ Step into the mind of NASA’s Curiosity Rover — explore its personal journal, ask questions, and uncover Mars’ secrets.
             </p>
             <p style={styles.tagline}>
-                🚀 Let curiosity guide you — the universe is waiting!
+                🪐 A planet of discovery awaits. Start your conversation with Curiosity today!
             </p>
         </header>
     );

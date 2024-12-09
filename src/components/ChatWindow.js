@@ -6,11 +6,11 @@ import '../styles/ChatWindow.css'; // External CSS for better styling
 // Header Component
 const ChatHeader = ({ date }) => (
     <div className="chat-header">
-        <h2>💬 Talk to Curiosity</h2>
+        <h2>💬 Engage with Curiosity</h2>
         <p>
             Sol {date.sol} | Earth Date: {date.earthDate}
         </p>
-        <p>Ask me about what I’ve seen, Mars, or anything you’re curious about!</p>
+        <p>Ask me about Mars' geology, my findings, or the data I've collected.</p>
     </div>
 );
 

@@ -10,7 +10,7 @@ const JournalHeader = ({ date }) => (
     <p>
       Sol {date.sol} | Earth Date: {date.earthDate}
     </p>
-    <p>Here’s what I’ve seen and written about today!</p>
+    <p>Yesterday's discoveries are in — what secrets did Mars reveal this time?</p>
   </div>
 );
 
@@ -49,12 +49,24 @@ const PipelineLogsViewer = ({ selectedDate }) => {
         <div className="logs-container">
           {imagesAndMemories.map((entry, index) => (
             <div key={index} className="image-memory-container">
+              {/* Image */}
               <img
                 src={entry.img_src}
                 alt={`Mars Image ${index + 1}`}
                 className="rover-image"
               />
-              <pre className="memory-text">{entry.memory}</pre>
+
+              {/* Features and Memory Details */}
+              <div className="memory-interpretation">
+                <p><strong>Features:</strong> {entry.memory.Features}</p>
+                <p><strong>Description:</strong> {entry.memory.Description}</p>
+                {entry.memory.Speculation && (
+                  <p><strong>Speculation:</strong> {entry.memory.Speculation}</p>
+                )}
+                {entry.memory.Reflection && (
+                  <p><strong>Reflection:</strong> {entry.memory.Reflection}</p>
+                )}
+              </div>
             </div>
           ))}
         </div>
