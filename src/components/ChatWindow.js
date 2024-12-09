@@ -36,7 +36,7 @@ function ChatWindow({ selectedDate }) {
             // Uncomment the specific error to test its behavior
 
             // Simulate 429: OpenAI credit limit exceeded
-            throw { response: { status: 429 } };
+            // throw { response: { status: 429 } };
 
             // Simulate 504: Gateway Timeout error
             // throw { response: { status: 504 } };
