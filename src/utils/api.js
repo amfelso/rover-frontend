@@ -39,7 +39,7 @@ export const invokeApi = async (method, path, body = null) => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return await response.text();
+    return await response;
   } catch (error) {
     console.error("Error invoking API:", error);
     throw error;

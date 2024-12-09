@@ -1,46 +1,7 @@
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #f4f4f9;
-}
-
-h1, h2 {
-  color: #333;
-}
-
-.chat-window {
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  height: 300px; /* Increase chat window height */
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.pipeline-logs-viewer {
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  height: 300px; /* Slightly smaller height for pipeline logs */
-  display: flex;
-  flex-direction: column;
-  overflow: auto;
-}
-
-.logout-button {
-  padding: 10px 20px;
-  background-color: #ff4d4d;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.logout-button:hover {
-  background-color: #e43c3c;
+.loading-message,
+.no-entries-message {
+  text-align: center;
+  font-size: 18px;
+  color: #666;
+  margin-top: 20px;
 }

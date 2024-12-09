@@ -8,7 +8,7 @@ import { fetchDefaultSimulationDate } from "./utils/api";
 import "./styles/App.css";
 
 function App() {
-  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedDate, setSelectedDate] = useState("2012-08-06");
 
   // Initialize the default date on load
   useEffect(() => {

@@ -36,7 +36,8 @@ function ChatWindow({ selectedDate }) {
                 conversation_id: selectedDate,
                 earth_date: selectedDate,
             };
-            const roverResponse = await invokeApi('POST', '/chat', postBody);
+            const response = await invokeApi('POST', '/chat', postBody);
+            const roverResponse = await response.text();
 
             // Add Rover's response to the chat
             const roverMessage = { sender: 'Rover', text: roverResponse || 'No response from Rover.' };
