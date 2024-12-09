@@ -26,12 +26,21 @@ jobs:
         npm install eslint eslint-plugin-react eslint-plugin-react-hooks --save-dev
         npx eslint src/
 
-    # Step 4: Run Unit Tests
+    # Step 4: Set Environment Variables
+    - name: Set Environment Variables
+      env:
+        INVOKE_URL: "https://tmlg7yfb6l.execute-api.us-east-1.amazonaws.com/Prod"
+      run: |
+        echo "REACT_APP_AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}" >> .env
+        echo "REACT_APP_AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> .env
+        echo "REACT_APP_API_GATEWAY_INVOKE_URL=$INVOKE_URL" >> .env
+
+    # Step 5: Run Unit Tests
     - name: Run Tests
       run: |
         npm install --save-dev jest babel-jest @babel/preset-env @babel/preset-react react-test-renderer
         npm test
 
-    # Step 5: SAM Validate
+    # Step 6: SAM Validate
     - name: Validate SAM Template
       run: sam validate -t ./sam/template.yaml --region us-east-1
