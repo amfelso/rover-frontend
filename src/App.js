@@ -1,38 +1,58 @@
-import React, { useState, useEffect } from 'react';
-import WelcomeMessage from './components/WelcomeMessage';
-import ChatWindow from './components/ChatWindow';
-import DateSelector from './components/DateSelector';
-import { handleSignOut } from './auth';
-import { fetchDefaultSimulationDate } from './components/api'; // Import the function to fetch the default date
-import './App.css';
+import React, { useState, useEffect } from "react";
+import WelcomeMessage from "./components/WelcomeMessage";
+import ChatWindow from "./components/ChatWindow";
+import DateSelector from "./components/DateSelector";
+import PipelineLogsViewer from "./components/PipelineLogsViewer";
+import { handleSignOut } from "./auth";
+import { fetchDefaultSimulationDate } from "./utils/api";
+import "./styles/App.css";
 
 function App() {
-    const [selectedDate, setSelectedDate] = useState('');
+  const [selectedDate, setSelectedDate] = useState("");
 
-    useEffect(() => {
-        const initializeDate = async () => {
-            const defaultDate = await fetchDefaultSimulationDate();
-            setSelectedDate(defaultDate);
-        };
-        initializeDate();
-    }, []);
-
-    const handleDateSelect = (date) => {
-        setSelectedDate(date);
-        console.log('Selected date:', date); // For debugging
+  // Initialize the default date on load
+  useEffect(() => {
+    const initializeDate = async () => {
+      const defaultDate = await fetchDefaultSimulationDate();
+      setSelectedDate(defaultDate);
     };
+    initializeDate();
+  }, []);
 
-    return (
-        <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-            <WelcomeMessage />
-            <DateSelector defaultDate={selectedDate} onDateSelect={handleDateSelect} />
-            <ChatWindow selectedDate={selectedDate} />
-            {/* Logout Button */}
-            <button onClick={handleSignOut} className="logout-button">
-                Logout
-            </button>
+  const handleDateSelect = (date) => {
+    setSelectedDate(date);
+    console.log("Selected date:", date); // Debugging
+  };
+
+  return (
+    <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "20px" }}>
+      {/* Welcome Section */}
+      <WelcomeMessage />
+
+      {/* Date Selector */}
+      <DateSelector defaultDate={selectedDate} onDateSelect={handleDateSelect} />
+
+      {/* Main Content Layout */}
+      <div style={{ display: "flex", gap: "20px", marginTop: "20px" }}>
+        {/* Chat Window */}
+        <div style={{ flex: 1 }}> {/* Allocate more space to the chat window */}
+          <ChatWindow selectedDate={selectedDate} />
         </div>
-    );
+
+        {/* Pipeline Logs Viewer */}
+        <div style={{ flex: 1 }}> {/* Allocate less space to pipeline logs */}
+          <PipelineLogsViewer selectedDate={selectedDate} />
+        </div>
+      </div>
+
+      {/* Logout Button */}
+      <div style={{ marginTop: "20px", textAlign: "center" }}>
+        <button onClick={handleSignOut} className="logout-button">
+          Logout
+        </button>
+      </div>
+    </div>
+  );
 }
 
 export default App;

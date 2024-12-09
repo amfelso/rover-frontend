@@ -67,6 +67,7 @@ export const fetchDefaultSimulationDate = async () => {
       return new Date().toISOString().split("T")[0]; // Default to today's date
     }
   } catch (error) {
+    console.error("Error fetching default simulation date:", error);
     return new Date().toISOString().split("T")[0]; // Default to today's date
   }
 };
