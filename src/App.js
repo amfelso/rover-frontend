@@ -30,8 +30,15 @@ function App() {
       <WelcomeMessage />
 
       {/* Date Selector */}
-      <DateSelector defaultDate={selectedDate} onDateSelect={handleDateSelect} />
-
+      <div
+          style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+          }}
+      >
+          <DateSelector defaultDate={selectedDate} onDateSelect={handleDateSelect} />
+      </div>
       {/* Main Content Layout */}
       <div style={{ display: "flex", gap: "20px", marginTop: "20px" }}>
         {/* Chat Window */}
