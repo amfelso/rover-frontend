@@ -6,10 +6,16 @@
 
 ## Description
 
-This repository contains the **Rover Frontend**, a React-based application designed to interact with the Curiosity Rover API. It includes CI/CD pipelines for both `develop` and `release` branches.
+This repository contains the **Rover Frontend**, a React-based application designed to interact with the Curiosity Rover API. It includes advanced features such as:
+- Integration with **Amazon Cognito User Pools** for user authentication.
+- **Amazon CloudFront** for secure, low-latency HTTPS hosting of the frontend.
+- CI/CD pipelines for both `develop` and `release` branches.
 
-- **Develop Pipeline**: Lints, tests, and validates the SAM template on every push to the `develop` branch.
-- **Release Pipeline**: Deploys infrastructure, builds the React app, and syncs it to the S3 bucket on every push to the `release` branch.
+### Key Features
+
+- **Cognito User Pools**: Enables secure user authentication using a hosted UI. 
+- **CloudFront Distribution**: Provides HTTPS hosting and caching for the frontend, ensuring secure and fast delivery of content.
+- **CI/CD Pipelines**: Automates deployment processes for both development and production environments.
 
 ---
 
@@ -56,9 +62,26 @@ Triggered on every push to the `develop` branch. This pipeline performs the foll
 ### Release Pipeline
 
 Triggered on every push to the `release` branch. This pipeline performs the following steps:
-1. **Deploy Infrastructure**: Deploys resources defined in the SAM template.
+1. **Deploy Infrastructure**: Deploys resources defined in the SAM template, including Cognito User Pools and CloudFront.
 2. **Build**: Builds the React application.
 3. **Sync to S3**: Uploads the React app to the S3 bucket for hosting.
+
+---
+
+## Authentication with Cognito User Pools
+
+The application integrates with **Amazon Cognito User Pools** for secure user authentication. The authentication flow includes:
+- A hosted UI for login.
+- Tokens (`idToken`, `accessToken`, and `refreshToken`) are securely handled in localStorage.
+- A logout button to securely end user sessions.
+
+---
+
+## Hosting with CloudFront
+
+The frontend is hosted using **Amazon CloudFront** to provide:
+- **HTTPS Support**: Ensures secure communication between the browser and the app.
+- **Caching**: Improves performance and reduces latency for end users.
 
 ---
 
