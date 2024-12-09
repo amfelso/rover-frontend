@@ -36,12 +36,12 @@ function App() {
       <div style={{ display: "flex", gap: "20px", marginTop: "20px" }}>
         {/* Chat Window */}
         <div style={{ flex: 1 }}> {/* Allocate more space to the chat window */}
-          <ChatWindow selectedDate={selectedDate} />
+          <ChatWindow className="common-container" selectedDate={selectedDate} />
         </div>
 
         {/* Pipeline Logs Viewer */}
         <div style={{ flex: 1 }}> {/* Allocate less space to pipeline logs */}
-          <PipelineLogsViewer selectedDate={selectedDate} />
+          <PipelineLogsViewer className="common-container" selectedDate={selectedDate} />
         </div>
       </div>
 
