@@ -62,16 +62,11 @@ export const fetchDefaultSimulationDate = async () => {
     const data = await dynamoDB.get(params).promise();
 
     if (data.Item && data.Item.earth_date) {
-      console.log("Fetched Simulation Date:", data.Item.earth_date);
       return data.Item.earth_date; // Return the fetched date
     } else {
-      console.warn(
-        "No simulation date found for MVP. Defaulting to today's date."
-      );
       return new Date().toISOString().split("T")[0]; // Default to today's date
     }
   } catch (error) {
-    console.error("Error fetching simulation date from DynamoDB:", error);
     return new Date().toISOString().split("T")[0]; // Default to today's date
   }
 };

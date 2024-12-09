@@ -1,40 +1,30 @@
-import React, { useState, useEffect } from "react";
-import { fetchDefaultSimulationDate } from "./api";
+import React, { useState, useEffect } from 'react';
 
-function DateSelector({ onDateChange }) {
-  const [selectedDate, setSelectedDate] = useState("");
+function DateSelector({ defaultDate, onDateSelect }) {
+    const [date, setDate] = useState(defaultDate);
 
-  useEffect(() => {
-    const fetchDate = async () => {
-      const defaultDate = await fetchDefaultSimulationDate();
-      setSelectedDate(defaultDate);
-      if (onDateChange) {
-        onDateChange(defaultDate);
-      }
+    useEffect(() => {
+        setDate(defaultDate);
+    }, [defaultDate]);
+
+    const handleDateChange = (event) => {
+        const selectedDate = event.target.value;
+        setDate(selectedDate);
+        onDateSelect(selectedDate);
     };
 
-    fetchDate();
-  }, [onDateChange]);
-
-  const handleDateChange = (event) => {
-    const newDate = event.target.value;
-    setSelectedDate(newDate);
-    if (onDateChange) {
-      onDateChange(newDate);
-    }
-  };
-
-  return (
-    <div>
-      <label htmlFor="date-picker">Select Simulation Date:</label>
-      <input
-        id="date-picker"
-        type="date"
-        value={selectedDate}
-        onChange={handleDateChange}
-      />
-    </div>
-  );
+    return (
+        <div style={{ margin: '20px 0', textAlign: 'center' }}>
+            <label htmlFor="date-picker">Select an Earth Date: </label>
+            <input
+                id="date-picker"
+                type="date"
+                value={date}
+                onChange={handleDateChange}
+                style={{ padding: '5px' }}
+            />
+        </div>
+    );
 }
 
 export default DateSelector;
