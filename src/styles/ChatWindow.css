@@ -97,13 +97,33 @@
     border-radius: 5px;
     cursor: pointer;
     font-size: 14px;
-}
+    }
 
-.chat-send-button:hover {
-    background-color: #0056b3;
-}
+    .chat-send-button:hover {
+        background-color: #0056b3;
+    }
 
-.chat-send-button:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-}
+    .chat-send-button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+    }
+
+.retry-button {
+    margin-top: 5px;
+    padding: 8px 16px;
+    background-color: #e67e4d; /* Martian orange */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .retry-button:hover {
+    background-color: #d45a2d; /* Darker orange on hover */
+  }
+  
+  .retry-button:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(255, 99, 71, 0.8);
+  }

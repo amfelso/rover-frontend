@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { invokeApi } from '../utils/api';
 import { calculateSol } from "../utils/date";
 import '../styles/ChatWindow.css'; // External CSS for better styling
@@ -18,21 +18,35 @@ function ChatWindow({ selectedDate }) {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
+    const messagesEndRef = useRef(null);
 
-    const handleSend = async () => {
-        if (!input.trim()) return;
+    const handleSend = async (retryInput = '') => {
+        const messageToSend = (retryInput || input).trim();
+        if (!messageToSend) return;
 
         // Add the user's message to the chat
-        const userMessage = { sender: 'You', text: input };
+        const userMessage = { sender: 'You', text: messageToSend };
         setMessages([...messages, userMessage]);
 
         setInput(''); // Clear input field
         setLoading(true); // Set loading state
 
         try {
+            // Simulate a 429 or 504 error for testing
+            // Uncomment the specific error to test its behavior
+
+            // Simulate 429: OpenAI credit limit exceeded
+            throw { response: { status: 429 } };
+
+            // Simulate 504: Gateway Timeout error
+            // throw { response: { status: 504 } };
+
+            // Simulate unexpected error
+            // throw new Error('Unexpected error for testing');
+
             // Call the API to get Rover's response
             const postBody = {
-                user_prompt: input,
+                user_prompt: messageToSend,
                 conversation_id: selectedDate,
                 earth_date: selectedDate,
             };
@@ -43,14 +57,49 @@ function ChatWindow({ selectedDate }) {
             const roverMessage = { sender: 'Rover', text: roverResponse || 'No response from Rover.' };
             setMessages((prevMessages) => [...prevMessages, roverMessage]);
         } catch (error) {
-            // Handle API errors
-            const errorMessage = { sender: 'System', text: 'Failed to fetch response from Rover. Please try again later.' };
+            // Check error status codes
+            let errorMessage;
+            if (error.response && error.response.status === 429) {
+                errorMessage = {
+                    sender: 'System',
+                    text: `🌌 Space travel is expensive! You've hit your OpenAI credit limit. Please pay for more credits so we can keep exploring the Red Planet!`,
+                    retry: true, // Enable retry
+                    input: messageToSend
+                };
+            } else if (error.response && error.response.status === 504) {
+                errorMessage = {
+                    sender: 'System',
+                    text: `🛰️ Hmm, it seems your message got lost on its long journey from Mars. Mars is really far away! Please try again.`,
+                    retry: true, // Enable retry
+                    input: messageToSend
+                };
+            } else {
+                errorMessage = {
+                    sender: 'System',
+                    text: 'An unexpected error occurred. Please try again later.',
+                };
+            }
+    
             setMessages((prevMessages) => [...prevMessages, errorMessage]);
             console.error('Error invoking API:', error);
         } finally {
             setLoading(false); // Reset loading state
         }
     };
+
+    const handleKeyPress = (event) => {
+        if (event.key === 'Enter' && !loading) {
+            handleSend();
+        }
+    };
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
 
     return (
         <div className="chat-window">
@@ -63,8 +112,18 @@ function ChatWindow({ selectedDate }) {
                     <div key={index} className={`chat-message ${msg.sender === 'You' ? 'user' : 'rover'}`}>
                         <div className="message-sender">{msg.sender}:</div>
                         <div className="message-text">{msg.text}</div>
+                        {/* Retry Button */}
+                        {msg.retry && (
+                            <button
+                                className="retry-button"
+                                onClick={() => handleSend(msg.input)} // Retry with the original input
+                            >
+                                Retry
+                            </button>
+                        )}
                     </div>
                 ))}
+                <div ref={messagesEndRef} />
             </div>
 
             {/* Input and Send Button */}
@@ -73,11 +132,12 @@ function ChatWindow({ selectedDate }) {
                     type="text"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
+                    onKeyPress={handleKeyPress}
                     placeholder="Type a message..."
                     className="chat-input"
                     disabled={loading}
                 />
-                <button onClick={handleSend} className="chat-send-button" disabled={loading}>
+                <button onClick={() => handleSend()} className="chat-send-button" disabled={loading}>
                     {loading ? 'Sending...' : 'Send'}
                 </button>
             </div>
