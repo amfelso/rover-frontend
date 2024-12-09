@@ -1,8 +1,8 @@
-
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
 Resources:
+  # S3 Bucket for React App
   ReactAppBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -18,6 +18,7 @@ Resources:
         IgnorePublicAcls: true
         RestrictPublicBuckets: false
 
+  # S3 Bucket Policy
   ReactAppBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
@@ -30,6 +31,38 @@ Resources:
             Action: "s3:GetObject"
             Resource: !Sub "arn:aws:s3:::${ReactAppBucket}/*"
 
+  # CloudFront Distribution
+  ReactAppCloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Origins:
+          - DomainName: !GetAtt ReactAppBucket.DomainName
+            Id: ReactAppS3Origin
+            CustomOriginConfig:
+              HTTPPort: 80
+              HTTPSPort: 443
+              OriginProtocolPolicy: http-only
+        DefaultCacheBehavior:
+          TargetOriginId: ReactAppS3Origin
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods:
+            - GET
+            - HEAD
+          CachedMethods:
+            - GET
+            - HEAD
+          Compress: true
+          ForwardedValues:
+            QueryString: false
+            Cookies:
+              Forward: none
+        ViewerCertificate:
+          CloudFrontDefaultCertificate: true # Use CloudFront's default HTTPS certificate
+        DefaultRootObject: index.html
+
+  # Cognito User Pool
   ReactAppUserPool:
     Type: AWS::Cognito::UserPool
     Properties:
@@ -68,10 +101,10 @@ Resources:
       AllowedOAuthFlowsUserPoolClient: true
       CallbackURLs:
         - http://localhost:3000 # Development
-        - !Sub "https://${ReactAppBucket}.s3-website-${AWS::Region}.amazonaws.com" # Production (HTTPS required)
+        - !Sub "https://${ReactAppCloudFrontDistribution.DomainName}" # Production (HTTPS via CloudFront)
       LogoutURLs:
         - http://localhost:3000 # Development
-        - !Sub "https://${ReactAppBucket}.s3-website-${AWS::Region}.amazonaws.com" # Production (HTTPS required)
+        - !Sub "https://${ReactAppCloudFrontDistribution.DomainName}" # Production (HTTPS via CloudFront)
       SupportedIdentityProviders:
         - COGNITO
 
@@ -84,25 +117,17 @@ Resources:
 
 Outputs:
   CognitoHostedUIDomain:
-    Value: !Sub "https://${ReactAppCognitoDomain.Domain}.auth.${AWS::Region}.amazoncognito.com"
-    Description: Auto-generated Cognito Hosted UI Domain
-
-  CognitoUserPoolId:
-    Value: !Ref ReactAppUserPool
-    Description: Cognito User Pool ID
+    Value: !Sub "https://${ReactAppCognitoDomain}.auth.${AWS::Region}.amazoncognito.com"
+    Description: Cognito Hosted UI Domain
 
   CognitoUserPoolClientId:
     Value: !Ref ReactAppUserPoolClient
     Description: Cognito User Pool Client ID
-
-  CognitoHostedUIDomain:
-    Value: !Sub "https://${ReactAppCognitoDomain}.auth.${AWS::Region}.amazoncognito.com"
-    Description: Cognito Hosted UI Domain
 
   S3BucketName:
     Value: !Ref ReactAppBucket
     Description: Name of the S3 bucket hosting the React app
 
   WebsiteURL:
-    Value: !GetAtt ReactAppBucket.WebsiteURL
-    Description: URL of the React app hosted on S3
+    Value: !Sub "https://${ReactAppCloudFrontDistribution.DomainName}"
+    Description: URL of the React app hosted on CloudFront

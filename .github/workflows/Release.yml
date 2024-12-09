@@ -47,11 +47,20 @@ jobs:
         echo "REACT_APP_COGNITO_HOSTED_UI=$COGNITO_HOSTED_UI" > .env
         echo "REACT_APP_COGNITO_CLIENT_ID=$COGNITO_USER_POOL_ID" >> .env
 
-    # Step 6: Build React App
+    # Step 6: Set Environment Variables
+    - name: Set Environment Variables
+      env:
+        INVOKE_URL: "https://tmlg7yfb6l.execute-api.us-east-1.amazonaws.com/Prod"
+      run: |
+        echo "REACT_APP_AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}" >> .env
+        echo "REACT_APP_AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> .env
+        echo "REACT_APP_API_GATEWAY_INVOKE_URL=$INVOKE_URL" >> .env
+
+    # Step 7: Build React App
     - name: Build React App
       run: npm run build
 
-    # Step 7: Get Bucket Name
+    # Step 8: Get Bucket Name
     - name: Get Bucket Name
       id: get_bucket_name
       env:
@@ -63,7 +72,7 @@ jobs:
           --query "Stacks[0].Outputs[?OutputKey=='S3BucketName'].OutputValue" --output text)
         echo "BUCKET_NAME=$BUCKET_NAME" >> $GITHUB_ENV
 
-    # Step 8: Deploy React App to S3
+    # Step 9: Deploy React App to S3
     - name: Deploy React App to S3
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}

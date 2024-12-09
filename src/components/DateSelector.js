@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-function DateSelector({ onDateSelect }) {
-    const [date, setDate] = useState('');
+function DateSelector({ defaultDate, onDateSelect }) {
+    const [date, setDate] = useState(defaultDate);
 
-    const handleDateChange = (e) => {
-        const selectedDate = e.target.value;
+    useEffect(() => {
+        setDate(defaultDate);
+    }, [defaultDate]);
+
+    const handleDateChange = (event) => {
+        const selectedDate = event.target.value;
         setDate(selectedDate);
-        onDateSelect(selectedDate); // Notify parent
+        onDateSelect(selectedDate);
     };
 
     return (
