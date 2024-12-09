@@ -19,6 +19,7 @@ function ChatWindow({ selectedDate }) {
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
     const messagesEndRef = useRef(null);
+    const messagesContainerRef = useRef(null);
 
     const handleSend = async (retryInput = '') => {
         const messageToSend = (retryInput || input).trim();
@@ -94,7 +95,9 @@ function ChatWindow({ selectedDate }) {
     };
 
     const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        if (messagesContainerRef.current) {
+            messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+        }
     };
 
     useEffect(() => {
@@ -107,7 +110,7 @@ function ChatWindow({ selectedDate }) {
             <ChatHeader date={{ sol: calculateSol(selectedDate) || 0, earthDate: selectedDate || '2012-08-06' }} />
 
             {/* Chat Messages */}
-            <div className="chat-messages">
+            <div className="chat-messages" ref={messagesContainerRef}>
                 {messages.map((msg, index) => (
                     <div key={index} className={`chat-message ${msg.sender === 'You' ? 'user' : 'rover'}`}>
                         <div className="message-sender">{msg.sender}:</div>
