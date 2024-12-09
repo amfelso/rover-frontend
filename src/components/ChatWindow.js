@@ -1,10 +1,23 @@
 import React, { useState } from 'react';
-import { invokeApi } from './api';
+import { invokeApi } from '../utils/api';
+import { calculateSol } from "../utils/date";
+import '../styles/ChatWindow.css'; // External CSS for better styling
+
+// Header Component
+const ChatHeader = ({ date }) => (
+    <div className="chat-header">
+        <h2>💬 Talk to Curiosity</h2>
+        <p>
+            Sol {date.sol} | Earth Date: {date.earthDate}
+        </p>
+        <p>Ask me about what I’ve seen, Mars, or anything you’re curious about!</p>
+    </div>
+);
 
 function ChatWindow({ selectedDate }) {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
-    const [loading, setLoading] = useState(false); // Track loading state
+    const [loading, setLoading] = useState(false);
 
     const handleSend = async () => {
         if (!input.trim()) return;
@@ -39,25 +52,34 @@ function ChatWindow({ selectedDate }) {
     };
 
     return (
-        <div style={{ border: '1px solid #ccc', padding: '20px', borderRadius: '8px' }}>
-            <div style={{ height: '300px', overflowY: 'scroll', marginBottom: '10px' }}>
+        <div className="chat-window">
+            {/* Add Header */}
+            <ChatHeader date={{ sol: calculateSol(selectedDate) || 0, earthDate: selectedDate || '2012-08-06' }} />
+
+            {/* Chat Messages */}
+            <div className="chat-messages">
                 {messages.map((msg, index) => (
-                    <div key={index} style={{ margin: '10px 0' }}>
-                        <strong>{msg.sender}:</strong> <span>{msg.text}</span>
+                    <div key={index} className={`chat-message ${msg.sender === 'You' ? 'user' : 'rover'}`}>
+                        <div className="message-sender">{msg.sender}:</div>
+                        <div className="message-text">{msg.text}</div>
                     </div>
                 ))}
             </div>
-            <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Type a message..."
-                style={{ width: '80%', padding: '10px', marginRight: '10px' }}
-                disabled={loading} // Disable input while loading
-            />
-            <button onClick={handleSend} style={{ padding: '10px' }} disabled={loading}>
-                {loading ? 'Sending...' : 'Send'}
-            </button>
+
+            {/* Input and Send Button */}
+            <div className="chat-input-container">
+                <input
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Type a message..."
+                    className="chat-input"
+                    disabled={loading}
+                />
+                <button onClick={handleSend} className="chat-send-button" disabled={loading}>
+                    {loading ? 'Sending...' : 'Send'}
+                </button>
+            </div>
         </div>
     );
 }
