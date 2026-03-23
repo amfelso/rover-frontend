@@ -32,6 +32,10 @@
       "last 1 safari version"
     ]
   },
+  "overrides": {
+    "fast-xml-parser": "5.5.6",
+    "flatted": "3.4.0"
+  },
   "devDependencies": {
     "@eslint/js": "^9.0.0",
     "ajv": "^8.17.1",
